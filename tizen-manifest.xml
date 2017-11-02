@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="org.example.watchread" version="1.0.0">
+    <profile name="wearable"/>
+    <watch-application ambient-support="true" appid="org.example.watchread" exec="watchread">
+        <label>watchread</label>
+        <icon>watchread.png</icon>
+    </watch-application>
+    <privileges>
+        <privilege>http://tizen.org/privilege/alarm.set</privilege>
+        <privilege>http://tizen.org/privilege/filesystem.read</privilege>
+        <privilege>http://tizen.org/privilege/filesystem.write</privilege>
+    </privileges>
+</manifest>
