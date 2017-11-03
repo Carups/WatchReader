@@ -19,4 +19,7 @@
 void show_file_req_popup(void);
 void hide_file_req_popup(void);
 
+void pause_timer(void);
+void resume_timer(void);
+
 #endif /* __FT_RECEIVER_H__ */

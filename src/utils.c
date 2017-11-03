@@ -22,7 +22,7 @@ extern int flag;
 //}
 
 // return 1 if file exist, else return 0
-int my_text_generate(const char* path) {
+static int my_text_generate(const char* path) {
 	const int BUFSIZE = 128; // word size
 	char str[BUFSIZE];
 	FILE* fp = fopen(path, "r");

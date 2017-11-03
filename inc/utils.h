@@ -11,4 +11,7 @@
 
 void reader_start(const char* path);
 
+int serialize_last_book(void);
+int deserialize_last_book(void);
+
 #endif /* __UTILS_H__ */
