@@ -13,6 +13,10 @@ typedef struct appdata {
 	Evas_Object *layout;
 } appdata_s;
 
+char* my_text[1000000];
+int SZ = 0;
+int flag = 0;
+
 static appdata_s *global_ad;
 
 static void win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
@@ -181,6 +185,10 @@ static void app_resume(void *data)
 static void app_terminate(void *data)
 {
 	/* Release all resources. */
+	dlog_print(DLOG_INFO, TAG, "free %d strings in my_text", SZ);
+	for(int i = 0; i != SZ; ++i){
+		free(my_text[i]);
+	}
 }
 
 static void ui_app_lang_changed(app_event_info_h event_info, void *user_data)

@@ -4,6 +4,8 @@
 #include <efl_extension.h>
 #include <dlog.h>
 #include <glib.h>
+#include <watch_app.h>
+#include <watch_app_efl.h>
 
 #ifndef __FT_RECEIVER_H__
 #define __FT_RECEIVER_H__
