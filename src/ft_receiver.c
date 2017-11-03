@@ -4,7 +4,7 @@
 #include <Ecore.h>
 #include <unistd.h>
 
-double TIMEOUT_1 = 1.0; // interval for timer1
+double TIMEOUT_1 = 0.01; // interval for timer1
 
 typedef struct appdata {
 	Evas_Object *win;
@@ -15,25 +15,53 @@ typedef struct appdata {
 	Evas_Object *btn;
 	Evas_Object *icon;
 	Evas_Object *layout;
+	// added
+	Evas_Object *label;
+	Evas_Object *button;
+	Evas_Object *button1;
+	Evas_Object *faster;
+	Evas_Object *slower;
+	Evas_Object *text;
+	Evas_Object *back;
 } appdata_s;
 
-char* my_text[1000000];
-int SZ = 0;
-int flag = 0;
+char* my_text[1000000] = { "aaaaa", "bbbb", "cccc", "aaaaa", "bbbb", "cccc",
+		"aaaaa", "bbbb", "cccc", "aaaaa", "bbbb", "cccc", "aaaaa", "bbbb",
+		"cccc" };
+int SZ = 15, USER_SPEED = 300;
+int flag = 0, cnt = 0, id = 0;
+const int TEXT_BUF_SIZE = 256, WIDTH = 400, HEGHT = 400;
 Ecore_Timer *timer_p;
+appdata_s* DATA;
 
-//////////////////// timer ////////////////////////
-static double _initial_time = 0;
-
-static double _get_current_time(void) {
-	return ecore_time_get() - _initial_time;
+void pause_timer() {
+	if (timer_p) {
+		ecore_timer_freeze(timer_p);
+	}
 }
 
+void resume_timer() {
+	if (timer_p) {
+		ecore_timer_thaw(timer_p);
+	}
+}
+
+//////////////////// timer ////////////////////////
+//static double _initial_time = 0;
+//static double _get_current_time(void) {
+//	return ecore_time_get() - _initial_time;
+//}
+
+static void update_watch(appdata_s *);
+
 static Eina_Bool _timer1_cb(void *data EINA_UNUSED) {
-	dlog_print(DLOG_DEBUG, TAG, "Timer1 expired after %0.3f seconds.",
-			_get_current_time());
+//	dlog_print(DLOG_DEBUG, TAG, "Timer1 expired after %0.3f seconds.",
+//			_get_current_time());
 
 	// write your ui changing code here
+	if (DATA) {
+		update_watch(DATA);
+	}
 
 	return ECORE_CALLBACK_RENEW;
 }
@@ -47,9 +75,137 @@ static void win_delete_request_cb(void *data, Evas_Object *obj,
 	ui_app_exit();
 }
 
-static Eina_Bool _naviframe_pop_cb(void *data, Elm_Object_Item *it) {
-	ui_app_exit();
-	return EINA_TRUE;
+//static Eina_Bool _naviframe_pop_cb(void *data, Elm_Object_Item *it) {
+//	ui_app_exit();
+//	return EINA_TRUE;
+//}
+static void button_setting(void *data, Evas_Object *obj, void *event_info) {
+	flag = 1;
+}
+
+static void button_last_book(void *user_data, Evas_Object *obj,
+		void *event_info) {
+
+	flag = 2;
+}
+
+static void button_slower(void *data, Evas_Object *obj, void *event_info) {
+	USER_SPEED -= 20;
+	if (USER_SPEED <= 100) {
+		USER_SPEED = 100;
+	}
+
+}
+
+static void button_fast(void *data, Evas_Object *obj, void *event_info) {
+	USER_SPEED += 20;
+}
+
+static void button_back(void *data, Evas_Object *obj, void *event_info) {
+	flag = 0;
+}
+static int spritz_function(char* in, char* out, int width, int speed) {
+	int shift;
+	int red_point = 0.35 * width;
+	int len = (int) strlen(in);
+	int num_of_tics = (60 / TIMEOUT_1) / (speed);
+	// define shift of the word depending on his len
+	if (len == 1 && in[0] != 'M') {
+		shift = red_point - 0;
+	} else if (len > 1 && len <= 5) {
+		shift = red_point - 1;
+	} else if (len > 5 && len <= 9) {
+		shift = red_point - 2;
+	} else if (len > 9 && len <= 13) {
+		shift = red_point - 3;
+	} else {
+		shift = red_point - 4;
+	}
+
+	for (int i = 0; i < len; i++) {
+		out[shift + i] = in[i];
+	}
+	//define the num of pin
+	if (in[len - 1] == '.' && in[0] != 'M') {
+		num_of_tics *= 5;
+	} else if (len == 1) {
+		num_of_tics *= 2;
+	} else if (len > 1 && len <= 6) {
+		num_of_tics *= 3;
+	} else {
+		num_of_tics *= 2;
+	}
+
+	return num_of_tics;
+
+}
+
+static void update_watch(appdata_s *ad) {
+	if (flag == 2) {
+		evas_object_hide(ad->button);
+		evas_object_hide(ad->button1);
+		evas_object_show(ad->label);
+
+		char watch_text[TEXT_BUF_SIZE];
+		int width = WIDTH;
+		char out[width];
+		for (int i = 0; i < width; ++i) {
+			out[i] = '#';
+		}
+
+		if (cnt == 0) {
+
+			cnt = spritz_function(my_text[id], out, width, USER_SPEED);
+			int pos = width * 0.35;
+			int pref = 0, suff = 0;
+			while (out[pref] == '#') {
+				pref++;
+			}
+			while (out[pos + 1 + suff] != '#') {
+				suff++;
+			}
+
+			//snprintf(watch_text, TEXT_BUF_SIZE, "<align=center>" "<color=#FF000000>" "%.*s" "</color>" "%.*s" "<color=#FF4500FF>" "%.*s" "</color>" "%.*s" "</align>", 1, out + pos, suff, out + pos + 1);
+			snprintf(watch_text, TEXT_BUF_SIZE,
+					"<align=center>" "<font=BreezeSans:style=condensed font_size=45>" "%.*s" "<color=#FF4500FF>" "%.*s" "</color>" "%.*s" "</font>" "</align>",
+					pos - pref, out + pref, 1, out + pos, suff, out + pos + 1);
+			//snprintf(watch_text, TEXT_BUF_SIZE, "<font = Sans>""<color=#FF4500FF>%s</color>%s<color=#FF4500FF>%c</color>%s", pref_empty, pref, v, suff);
+			elm_object_text_set(ad->label, watch_text);
+			cnt--;
+
+
+		} else {
+			// snprintf(watch_text, TEXT_BUF_SIZE, "<color=#FF4500FF>%s</color>%s<color=#FF4500FF>%c</color>%s", pref_empty, pref, v, suff);
+			cnt--;
+		}
+		if (cnt <= 0)
+		{
+			cnt = 0;
+			id++;
+			id %= SZ;
+		}
+	}
+	if (flag == 1) {
+		evas_object_hide(ad->button);
+		evas_object_hide(ad->button1);
+		evas_object_show(ad->faster);
+		evas_object_show(ad->slower);
+		evas_object_show(ad->back);
+		evas_object_show(ad->label);
+		char watch_text[TEXT_BUF_SIZE];
+		snprintf(watch_text, TEXT_BUF_SIZE, "<align=center>%d<align>",
+				USER_SPEED);
+		elm_object_text_set(ad->label, watch_text);
+	}
+
+	if (flag == 0) {
+		evas_object_show(ad->button);
+		evas_object_show(ad->button1);
+		evas_object_hide(ad->back);
+		evas_object_hide(ad->label);
+		evas_object_hide(ad->slower);
+		evas_object_hide(ad->faster);
+	}
 }
 
 static void _reject_cb(void *data, Evas_Object *obj, void *event_info) {
@@ -151,7 +307,7 @@ static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
 }
 
 static void create_base_gui(appdata_s *ad) {
-	Elm_Object_Item *nf_it = NULL;
+	// Elm_Object_Item *nf_it = NULL;
 
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
@@ -173,14 +329,55 @@ static void create_base_gui(appdata_s *ad) {
 	elm_object_content_set(ad->conform, ad->naviframe);
 
 	ad->content = create_content(ad->naviframe);
-	nf_it = elm_naviframe_item_push(ad->naviframe, "Book Receiver", NULL, NULL,
-			ad->content, NULL);
-	elm_naviframe_item_pop_cb_set(nf_it, _naviframe_pop_cb, ad->win);
+//	nf_it = elm_naviframe_item_push(ad->naviframe, "Book Receiver", NULL, NULL,
+//			ad->content, NULL);
+//	elm_naviframe_item_pop_cb_set(nf_it, _naviframe_pop_cb, ad->win);
 
 	global_ad = ad;
 
+	int width = 300;
+	int height = 400;
+	/* Label*/
+	ad->label = elm_label_add(ad->conform);
+
+	evas_object_resize(ad->label, 200, 200);
+	evas_object_move(ad->label, 70, 150);
+
+	/* button */
+	ad->button = elm_button_add(ad->conform);
+	elm_object_text_set(ad->button, "Setting");
+	evas_object_smart_callback_add(ad->button, "clicked", button_setting, ad);
+	evas_object_resize(ad->button, width, height / 4);
+	evas_object_move(ad->button, width / 10, height / 3);
+
+	ad->button1 = elm_button_add(ad->conform);
+	elm_object_text_set(ad->button1, "Last Book");
+	evas_object_smart_callback_add(ad->button1, "clicked", button_last_book,
+			ad);
+	evas_object_resize(ad->button1, width, height / 4);
+	evas_object_move(ad->button1, width / 10, height / 4 + height / 3);
+	/* settings */
+	ad->faster = elm_button_add(ad->conform);
+	elm_object_text_set(ad->faster, "i");
+	evas_object_smart_callback_add(ad->faster, "clicked", button_fast, ad);
+	evas_object_resize(ad->faster, width / 5, height / 4);
+	evas_object_move(ad->faster, 4 * width / 5 + width/10, height / 2 - 40);
+
+	ad->slower = elm_button_add(ad->conform);
+	elm_object_text_set(ad->slower, "r");
+	evas_object_smart_callback_add(ad->slower, "clicked", button_slower, ad);
+	evas_object_resize(ad->slower, width / 5, height / 4);
+	evas_object_move(ad->slower, width/10, height / 2 - 40);
+
+	ad->back = elm_button_add(ad->conform);
+	elm_object_text_set(ad->back, "back");
+	evas_object_smart_callback_add(ad->back, "clicked", button_back, ad);
+	evas_object_resize(ad->back, width, height / 4);
+	evas_object_move(ad->back, width/10, height / 3 + height / 4);
 	/* Show window after base gui is set up */
 	evas_object_show(ad->win);
+
+	update_watch(ad);
 }
 
 static bool app_create(void *data) {
@@ -189,6 +386,8 @@ static bool app_create(void *data) {
 	 If this function returns true, the main loop of application starts
 	 If this function returns false, the application is terminated */
 	appdata_s *ad = data;
+
+	DATA = ad;
 
 	create_base_gui(ad);
 	initialize_sap();
@@ -208,13 +407,16 @@ static void app_control(app_control_h app_control, void *data) {
 
 static void app_pause(void *data) {
 	/* Take necessary actions when application becomes invisible. */
+	dlog_print(DLOG_DEBUG, TAG, "app_pause() called");
 	if (timer_p) {
 		ecore_timer_freeze(timer_p);
 	}
+	flag = 0;
 }
 
 static void app_resume(void *data) {
 	/* Take necessary actions when application becomes visible. */
+	dlog_print(DLOG_DEBUG, TAG, "app_resume() called");
 	if (timer_p) {
 		ecore_timer_thaw(timer_p);
 	}
@@ -222,6 +424,7 @@ static void app_resume(void *data) {
 
 static void app_terminate(void *data) {
 	/* Release all resources. */
+	dlog_print(DLOG_DEBUG, TAG, "app_terminate() called");
 	dlog_print(DLOG_INFO, TAG, "free %d strings in my_text", SZ);
 	for (int i = 0; i != SZ; ++i) {
 		free(my_text[i]);
