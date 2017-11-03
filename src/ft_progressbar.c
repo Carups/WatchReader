@@ -24,8 +24,6 @@ static Evas_Object *cancel_btn;
 static Evas_Object *progressbar = NULL;
 static Evas_Object *naviframeparent;
 
-extern Ecore_Timer *timer_p;
-
 static void _timeout(void *data, Evas_Object *obj, void *event_info)
 {
 	dlog_print(DLOG_INFO, TAG, "# timeout ");
