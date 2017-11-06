@@ -24,7 +24,6 @@
 #include "ft_progressbar.h"
 #include "utils.h"
 
-
 char rcv_file_path[100]; // global path of saved file, initialized in void accept_file()
 
 struct priv {
@@ -36,12 +35,8 @@ static struct priv priv_data = { 0 };
 
 gboolean file_on_progress = 0;
 
-
 static void _on_send_completed(sap_file_transaction_h file_transaction,
-			       sap_ft_transfer_e result,
-			       const char *file_path,
-			       void *user_data)
-{
+		sap_ft_transfer_e result, const char *file_path, void *user_data) {
 
 	char error_message[100];
 	set_progress_bar_value(1);
@@ -53,10 +48,10 @@ static void _on_send_completed(sap_file_transaction_h file_transaction,
 	dlog_print(DLOG_INFO, TAG, "# file_path = %s", file_path);
 
 	// fucking debug-logging code
-	if(user_data){
+	if (user_data) {
 		char* foo = (char*) user_data;
 		dlog_print(DLOG_INFO, TAG, "# file_path = %c%c%c%c%c%c%c%c", foo[0],
-				foo[1],foo[2],foo[3],foo[4],foo[5],foo[6],foo[7]);
+				foo[1], foo[2], foo[3], foo[4], foo[5], foo[6], foo[7]);
 	} else {
 		dlog_print(DLOG_INFO, TAG, "# user_data is null");
 	}
@@ -122,25 +117,23 @@ static void _on_send_completed(sap_file_transaction_h file_transaction,
 	file_on_progress = 0;
 }
 
-static void _on_sending_file_in_progress(sap_file_transaction_h file_transaction,
-					 unsigned short int percentage_progress,
-					 void *user_data)
-{
+static void _on_sending_file_in_progress(
+		sap_file_transaction_h file_transaction,
+		unsigned short int percentage_progress, void *user_data) {
 	dlog_print(DLOG_INFO, TAG, "# progress %d", percentage_progress);
-	set_progress_bar_value((float)percentage_progress / 100);
+	set_progress_bar_value((float) percentage_progress / 100);
 	stop_reading();
 }
 
-static void __set_file_transfer_cb(sap_file_transaction_h file_socket)
-{
+static void __set_file_transfer_cb(sap_file_transaction_h file_socket) {
 	dlog_print(DLOG_INFO, TAG, "# set callbacks");
-	sap_file_transfer_set_progress_cb(file_socket, _on_sending_file_in_progress, NULL);
+	sap_file_transfer_set_progress_cb(file_socket, _on_sending_file_in_progress,
+			NULL);
 
 	sap_file_transfer_set_done_cb(file_socket, _on_send_completed, NULL);
 }
 
-void accept_file()
-{
+void accept_file() {
 	int ret;
 	// char rcv_file_path[100];
 	char *data_path = NULL;
@@ -156,8 +149,7 @@ void accept_file()
 	show_progress_bar();
 }
 
-void reject_file()
-{
+void reject_file() {
 	int ret;
 	ret = sap_file_transfer_reject(priv_data.socket);
 
@@ -165,10 +157,7 @@ void reject_file()
 }
 
 static void _on_send_file(sap_peer_agent_h peer_agent_h,
-			  sap_file_transaction_h socket,
-			  const char *file_path,
-			  void *user_data)
-{
+		sap_file_transaction_h socket, const char *file_path, void *user_data) {
 	file_on_progress = 1;
 	priv_data.socket = socket;
 	dlog_print(DLOG_INFO, TAG, "# incoming file request.");
@@ -176,27 +165,20 @@ static void _on_send_file(sap_peer_agent_h peer_agent_h,
 	show_file_req_popup();
 }
 
-void conn_terminated(sap_peer_agent_h peer_agent,
-		     sap_socket_h socket,
-		     sap_service_connection_terminated_reason_e result,
-		     void *user_data)
-{
+void conn_terminated(sap_peer_agent_h peer_agent, sap_socket_h socket,
+		sap_service_connection_terminated_reason_e result, void *user_data) {
 	dlog_print(DLOG_INFO, TAG, "connection terminated");
 }
 
-static void on_conn_req(sap_peer_agent_h peer_agent,
-			sap_socket_h socket,
-			sap_service_connection_result_e result,
-			void *user_data)
-{
+static void on_conn_req(sap_peer_agent_h peer_agent, sap_socket_h socket,
+		sap_service_connection_result_e result, void *user_data) {
 	sap_peer_agent_accept_service_connection(peer_agent);
-	sap_peer_agent_set_service_connection_terminated_cb(peer_agent, conn_terminated, NULL);
+	sap_peer_agent_set_service_connection_terminated_cb(peer_agent,
+			conn_terminated, NULL);
 }
 
 static void on_agent_initialized(sap_agent_h agent,
-				 sap_agent_initialized_result_e result,
-				 void *user_data)
-{
+		sap_agent_initialized_result_e result, void *user_data) {
 	switch (result) {
 	case SAP_AGENT_INITIALIZED_RESULT_SUCCESS:
 
@@ -232,9 +214,7 @@ static void on_agent_initialized(sap_agent_h agent,
 }
 
 static void _on_device_status_changed(sap_device_status_e status,
-				      sap_transport_type_e transport_type,
-				      void *user_data)
-{
+		sap_transport_type_e transport_type, void *user_data) {
 	dlog_print(DLOG_DEBUG, TAG, "%s, status :%d", __func__, status);
 
 	switch (transport_type) {
@@ -247,7 +227,8 @@ static void _on_device_status_changed(sap_device_status_e status,
 		break;
 
 	case SAP_TRANSPORT_TYPE_TCP:
-		dlog_print(DLOG_DEBUG, TAG, "transport_type (%d): tcp/ip", transport_type);
+		dlog_print(DLOG_DEBUG, TAG, "transport_type (%d): tcp/ip",
+				transport_type);
 		break;
 
 	case SAP_TRANSPORT_TYPE_USB:
@@ -255,11 +236,13 @@ static void _on_device_status_changed(sap_device_status_e status,
 		break;
 
 	case SAP_TRANSPORT_TYPE_MOBILE:
-		dlog_print(DLOG_DEBUG, TAG, "transport_type (%d): mobile", transport_type);
+		dlog_print(DLOG_DEBUG, TAG, "transport_type (%d): mobile",
+				transport_type);
 		break;
 
 	default:
-		dlog_print(DLOG_ERROR, TAG, "unknown transport_type (%d)", transport_type);
+		dlog_print(DLOG_ERROR, TAG, "unknown transport_type (%d)",
+				transport_type);
 		break;
 	}
 
@@ -284,28 +267,26 @@ static void _on_device_status_changed(sap_device_status_e status,
 	}
 }
 
-void cancel_file()
-{
+void cancel_file() {
 	sap_file_transfer_cancel(priv_data.socket);
 	hide_progress_bar();
 }
 
-gboolean agent_initialize()
-{
+gboolean agent_initialize() {
 	int result = 0;
 
 	do {
-		result = sap_agent_initialize(priv_data.agent, "/sample/filetransfer", SAP_AGENT_ROLE_PROVIDER,
-					      on_agent_initialized, NULL);
+		result = sap_agent_initialize(priv_data.agent, "/sample/filetransfer",
+				SAP_AGENT_ROLE_PROVIDER, on_agent_initialized, NULL);
 
-		dlog_print(DLOG_DEBUG, TAG, "SAP >>> getRegisteredServiceAgent() >>> %d", result);
+		dlog_print(DLOG_DEBUG, TAG,
+				"SAP >>> getRegisteredServiceAgent() >>> %d", result);
 	} while (result != SAP_RESULT_SUCCESS);
 
 	return TRUE;
 }
 
-gboolean initialize_sap(void)
-{
+gboolean initialize_sap(void) {
 	sap_agent_h agent = NULL;
 
 	sap_agent_create(&agent);

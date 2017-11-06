@@ -30,7 +30,7 @@ typedef struct appdata {
 	Evas_Object *back;
 } appdata_s;
 
-char *my_text[1000000] = {NULL};
+char *my_text[1000000] = { NULL };
 int SZ = 0;
 int USER_SPEED = 300;
 int flag = MENU_MODE, cnt = 0, id = 0;
@@ -39,30 +39,25 @@ const int TEXT_BUF_SIZE = 256, WIDTH = 400, HEGHT = 400;
 Ecore_Timer *timer_p;
 appdata_s *DATA;
 
-void pause_timer()
-{
+void pause_timer() {
 	if (timer_p) {
 		ecore_timer_freeze(timer_p);
 	}
 }
 
-void resume_timer()
-{
+void resume_timer() {
 	if (timer_p) {
 		ecore_timer_thaw(timer_p);
 	}
 }
 
-void stop_reading()
-{
+void stop_reading() {
 	pause_timer();
 }
 
-void start_reading()
-{
+void start_reading() {
 	resume_timer();
 }
-
 
 //////////////////// timer ////////////////////////
 //static double _initial_time = 0;
@@ -72,8 +67,7 @@ void start_reading()
 
 static void update_watch(appdata_s *);
 
-static void draw_menu()
-{
+static void draw_menu() {
 	appdata_s *ad = DATA;
 	evas_object_show(ad->button);
 	evas_object_show(ad->button1);
@@ -83,8 +77,7 @@ static void draw_menu()
 	evas_object_hide(ad->faster);
 }
 
-static void draw_settings()
-{
+static void draw_settings() {
 	appdata_s *ad = DATA;
 	evas_object_hide(ad->button);
 	evas_object_hide(ad->button1);
@@ -98,8 +91,7 @@ static void draw_settings()
 }
 
 // timer callback - draw screen
-static Eina_Bool _timer1_cb(void *data EINA_UNUSED)
-{
+static Eina_Bool _timer1_cb(void *data EINA_UNUSED) {
 //	dlog_print(DLOG_DEBUG, TAG, "Timer1 expired after %0.3f seconds.",
 //			_get_current_time());
 
@@ -115,8 +107,7 @@ static Eina_Bool _timer1_cb(void *data EINA_UNUSED)
 static appdata_s *global_ad;
 
 static void win_delete_request_cb(void *data, Evas_Object *obj,
-								  void *event_info)
-{
+		void *event_info) {
 	ui_app_exit();
 }
 
@@ -124,16 +115,14 @@ static void win_delete_request_cb(void *data, Evas_Object *obj,
 //	ui_app_exit();
 //	return EINA_TRUE;
 //}
-static void button_setting(void *data, Evas_Object *obj, void *event_info)
-{
+static void button_setting(void *data, Evas_Object *obj, void *event_info) {
 	// flag = SETTINGS_MODE;
 	// changed
 	draw_settings();
 }
 
 static void button_last_book(void *user_data, Evas_Object *obj,
-							 void *event_info)
-{
+		void *event_info) {
 
 	// restore last book, start reading mode
 	if (SZ > 0) { // was readed
@@ -150,8 +139,7 @@ static void button_last_book(void *user_data, Evas_Object *obj,
 	}
 }
 
-static void button_slower(void *data, Evas_Object *obj, void *event_info)
-{
+static void button_slower(void *data, Evas_Object *obj, void *event_info) {
 	USER_SPEED -= 50;
 	if (USER_SPEED <= 100) {
 		USER_SPEED = 100;
@@ -160,20 +148,17 @@ static void button_slower(void *data, Evas_Object *obj, void *event_info)
 
 }
 
-static void button_fast(void *data, Evas_Object *obj, void *event_info)
-{
+static void button_fast(void *data, Evas_Object *obj, void *event_info) {
 	USER_SPEED += 50;
 	draw_settings();
 }
 
-static void button_back(void *data, Evas_Object *obj, void *event_info)
-{
+static void button_back(void *data, Evas_Object *obj, void *event_info) {
 	// flag = MENU_MODE;
 	draw_menu();
 }
 
-static int spritz_function(char *in, char *out, int width, int speed)
-{
+static int spritz_function(char *in, char *out, int width, int speed) {
 	int shift;
 	int red_point = 0.35 * width;
 	int len = (int) strlen(in);
@@ -209,8 +194,7 @@ static int spritz_function(char *in, char *out, int width, int speed)
 
 }
 
-static void update_watch(appdata_s *ad)
-{
+static void update_watch(appdata_s *ad) {
 //	if (flag == READ_MODE) {
 	evas_object_hide(ad->button);
 	evas_object_hide(ad->button1);
@@ -236,9 +220,9 @@ static void update_watch(appdata_s *ad)
 		}
 
 		snprintf(watch_text, TEXT_BUF_SIZE,
-				 "<align=center>" "<font=BreezeSans:style=condensed font_size=45>"
-					 "%.*s" "<color=#FF4500FF>" "%.*s" "</color>" "%.*s" "</font>" "</align>",
-				 pos - pref, out + pref, 1, out + pos, suff, out + pos + 1);
+				"<align=center>" "<font=BreezeSans:style=condensed font_size=45>"
+						"%.*s" "<color=#FF4500FF>" "%.*s" "</color>" "%.*s" "</font>" "</align>",
+				pos - pref, out + pref, 1, out + pos, suff, out + pos + 1);
 		elm_object_text_set(ad->label, watch_text);
 		cnt--;
 	} else {
@@ -259,40 +243,35 @@ static void update_watch(appdata_s *ad)
 //	}
 }
 
-static void _reject_cb(void *data, Evas_Object *obj, void *event_info)
-{
+static void _reject_cb(void *data, Evas_Object *obj, void *event_info) {
 	if (!obj)
 		return;
 	evas_object_del(data);
 	reject_file();
 }
 
-static void _accept_cb(void *data, Evas_Object *obj, void *event_info)
-{
+static void _accept_cb(void *data, Evas_Object *obj, void *event_info) {
 	if (!obj)
 		return;
 	evas_object_del(data);
 	accept_file();
 }
 
-static void _popup_hide_cb(void *data, Evas_Object *obj, void *event_info)
-{
+static void _popup_hide_cb(void *data, Evas_Object *obj, void *event_info) {
 	if (!obj)
 		return;
 	elm_popup_dismiss(obj);
 }
 
 static void _popup_hide_finished_cb(void *data, Evas_Object *obj,
-									void *event_info)
-{
+		void *event_info) {
 	if (!obj)
 		return;
 	evas_object_del(obj);
 }
 
 static void popup_title_text_check_button(void *data, Evas_Object *obj,
-										  void *event_info)
-{
+		void *event_info) {
 	Evas_Object *popup;
 	Evas_Object *btn;
 	Evas_Object *icon;
@@ -304,16 +283,16 @@ static void popup_title_text_check_button(void *data, Evas_Object *obj,
 	//uxt_popup_set_rotary_event_enabled(popup, EINA_TRUE);
 	evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	eext_object_event_callback_add(popup, EEXT_CALLBACK_BACK, _popup_hide_cb,
-								   NULL);
+	NULL);
 	evas_object_smart_callback_add(popup, "dismissed", _popup_hide_finished_cb,
-								   NULL);
+	NULL);
 
 	layout = elm_layout_add(popup);
 	elm_layout_theme_set(layout, "layout", "popup", "content/circle/buttons2");
 	elm_object_part_text_set(layout, "elm.text.title", "");
 
 	elm_object_part_text_set(layout, "elm.text",
-							 "Do you want to receive file?");
+			"Do you want to receive file?");
 	elm_object_content_set(popup, layout);
 
 	btn = elm_button_add(popup);
@@ -324,8 +303,8 @@ static void popup_title_text_check_button(void *data, Evas_Object *obj,
 
 	icon = elm_image_add(btn);
 	elm_image_file_set(icon,
-					   "/opt/usr/apps/org.tizen.filetransferreceiver/res/images/tw_ic_popup_btn_check.png",
-					   NULL);
+			"/opt/usr/apps/org.tizen.filetransferreceiver/res/images/tw_ic_popup_btn_check.png",
+			NULL);
 	evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_object_part_content_set(btn, "elm.swallow.content", icon);
 	evas_object_show(icon);
@@ -338,8 +317,8 @@ static void popup_title_text_check_button(void *data, Evas_Object *obj,
 
 	icon = elm_image_add(btn);
 	elm_image_file_set(icon,
-					   "/opt/usr/apps/org.tizen.filetransferreceiver/res/images/tw_ic_popup_btn_delete.png",
-					   NULL);
+			"/opt/usr/apps/org.tizen.filetransferreceiver/res/images/tw_ic_popup_btn_delete.png",
+			NULL);
 	evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_object_part_content_set(btn, "elm.swallow.content", icon);
 	evas_object_show(icon);
@@ -351,35 +330,31 @@ static void popup_title_text_check_button(void *data, Evas_Object *obj,
 	global_ad->btn = btn;
 }
 
-void show_file_req_popup(void)
-{
+void show_file_req_popup(void) {
 	popup_title_text_check_button(global_ad->naviframe, NULL, NULL);
 }
-void hide_file_req_popup(void)
-{
+void hide_file_req_popup(void) {
 	elm_popup_dismiss(global_ad->popup);
 }
-static void win_back_cb(void *data, Evas_Object *obj, void *event_info)
-{
+static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	elm_win_lower(ad->win);
 }
 
-static void create_base_gui(appdata_s *ad)
-{
+static void create_base_gui(appdata_s *ad) {
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
 
 	evas_object_smart_callback_add(ad->win, "delete,request",
-								   win_delete_request_cb, NULL);
+			win_delete_request_cb, NULL);
 	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb,
-								   ad);
+			ad);
 
 	/* Conformant */
 	ad->conform = elm_conformant_add(ad->win);
 	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND,
-									 EVAS_HINT_EXPAND);
+	EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(ad->win, ad->conform);
 	evas_object_show(ad->conform);
 
@@ -408,7 +383,7 @@ static void create_base_gui(appdata_s *ad)
 	ad->button1 = elm_button_add(ad->conform);
 	elm_object_text_set(ad->button1, "Last Book");
 	evas_object_smart_callback_add(ad->button1, "clicked", button_last_book,
-								   ad);
+			ad);
 	evas_object_resize(ad->button1, width, height / 4);
 	evas_object_move(ad->button1, width / 10, height / 4 + height / 3);
 	/* settings */
@@ -436,8 +411,7 @@ static void create_base_gui(appdata_s *ad)
 	draw_menu();
 }
 
-static bool app_create(void *data)
-{
+static bool app_create(void *data) {
 	/* Hook to take necessary actions before main event loop starts
 	 Initialize UI resources and application's data
 	 If this function returns true, the main loop of application starts
@@ -459,13 +433,11 @@ static bool app_create(void *data)
 	return true;
 }
 
-static void app_control(app_control_h app_control, void *data)
-{
+static void app_control(app_control_h app_control, void *data) {
 	/* Handle the launch request. */
 }
 
-static void app_pause(void *data)
-{
+static void app_pause(void *data) {
 	/* Take necessary actions when application becomes invisible. */
 	dlog_print(DLOG_DEBUG, TAG, "app_pause() called");
 //	if (timer_p) {
@@ -474,7 +446,7 @@ static void app_pause(void *data)
 //
 //	flag = MENU_MODE;
 	stop_reading();
-	id = max(id - WORDS_BACK,  0);
+	id = max(id - WORDS_BACK, 0);
 	// draw_menu();
 
 //	int is_saved = serialize_last_book();
@@ -483,15 +455,13 @@ static void app_pause(void *data)
 //	}
 }
 
-static void app_resume(void *data)
-{
+static void app_resume(void *data) {
 	/* Take necessary actions when application becomes visible. */
 	dlog_print(DLOG_DEBUG, TAG, "app_resume() called");
 	draw_menu();
 }
 
-static void app_terminate(void *data)
-{
+static void app_terminate(void *data) {
 	if (timer_p) {
 		ecore_timer_del(timer_p);
 	}
@@ -510,45 +480,39 @@ static void app_terminate(void *data)
 	}
 }
 
-static void ui_app_lang_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_lang_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LANGUAGE_CHANGED*/
 	char *locale = NULL;
 	system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE,
-									 &locale);
+			&locale);
 	elm_language_set(locale);
 	free(locale);
 	return;
 }
 
-static void ui_app_orient_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_orient_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_DEVICE_ORIENTATION_CHANGED*/
 	return;
 }
 
-static void ui_app_region_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_region_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_REGION_FORMAT_CHANGED*/
 }
 
-static void ui_app_low_battery(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_low_battery(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LOW_BATTERY*/
 }
 
-static void ui_app_low_memory(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_low_memory(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LOW_MEMORY*/
 }
 
-int main(int argc, char *argv[])
-{
-	appdata_s ad = {0,};
+int main(int argc, char *argv[]) {
+	appdata_s ad = { 0, };
 	int ret = 0;
 
-	ui_app_lifecycle_callback_s event_callback = {0,};
-	app_event_handler_h handlers[5] = {NULL,};
+	ui_app_lifecycle_callback_s event_callback = { 0, };
+	app_event_handler_h handlers[5] = { NULL, };
 
 	event_callback.create = app_create;
 	event_callback.terminate = app_terminate;
@@ -557,15 +521,15 @@ int main(int argc, char *argv[])
 	event_callback.app_control = app_control;
 
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY],
-							 APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
+			APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY],
-							 APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
+			APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED],
-							 APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &ad);
+			APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED],
-							 APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &ad);
+			APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED],
-							 APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, &ad);
+			APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, &ad);
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
