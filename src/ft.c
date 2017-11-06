@@ -128,7 +128,7 @@ static void _on_sending_file_in_progress(sap_file_transaction_h file_transaction
 {
 	dlog_print(DLOG_INFO, TAG, "# progress %d", percentage_progress);
 	set_progress_bar_value((float)percentage_progress / 100);
-	pause_timer();
+	stop_reading();
 }
 
 static void __set_file_transfer_cb(sap_file_transaction_h file_socket)

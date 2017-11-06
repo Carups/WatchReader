@@ -2,13 +2,14 @@
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.2" package="org.tizen.filetransferreceiver" version="1.0.0">
     <profile name="wearable"/>
     <ui-application appid="org.tizen.filetransferreceiver" exec="filetransferreceiver" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>FileTransferReceiver</label>
-        <icon>filetransferreceiver.png</icon>
+        <label>WatchRead</label>
+        <icon>owlv117v6.png</icon>
         <metadata key="accessory-services-location" value="/res/xml/accessoryservices.xml"/>
         <metadata key="launch-on-attach" value="false"/>
     </ui-application>
     <privileges>
         <privilege>http://developer.samsung.com/tizen/privilege/accessoryprotocol</privilege>
+        <privilege>http://tizen.org/privilege/alarm.set</privilege>
         <privilege>http://tizen.org/privilege/content.write</privilege>
     </privileges>
     <feature name="http://tizen.org/feature/screen.size.normal">true</feature>

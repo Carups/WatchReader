@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <app_common.h>
+#include "ft_receiver.h"
 
 extern char* my_text[1000000];
 extern int SZ;
@@ -14,12 +15,9 @@ extern int flag;
 #define OK 1
 #define NO 0
 
-//static void check() {
-//	dlog_print(DLOG_INFO, TAG, "# saved strings are:");
-//	for (int i = 0; i != SZ; ++i) {
-//		dlog_print(DLOG_INFO, TAG, "# string: \'%s\'", my_text[i]);
-//	}
-//}
+int max(int a, int b) {
+	return a >= b ? a : b;
+}
 
 // return 1 if file exist, else return 0
 static int my_text_generate(const char* path) {
@@ -51,7 +49,7 @@ void reader_start(const char* path) {
 
 	id = 0;	  // start pos
 	if (rc) {
-		flag = 2; // watch_update will run reading mode =)
+		flag = 2; // will start_reading in other_place
 	}
 }
 
@@ -96,7 +94,7 @@ int serialize_last_book() {
 					"memory error in serialize_last_book: can't save id");
 			return NO;
 		}
-		fprintf(fp_pos, "%d", id);
+		fprintf(fp_pos, "%d", max(id - WORDS_BACK, 0));
 		fclose(fp_pos);
 
 		free(data_path);
