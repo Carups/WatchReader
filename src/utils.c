@@ -48,11 +48,11 @@ void reader_start(const char* path) {
 	dlog_print(DLOG_INFO, TAG, "# reader_start called with path=%s", path);
 
 	int rc = my_text_generate(path);
-	// check();
 
 	id = 0;	  // start pos
-	if (rc)
+	if (rc) {
 		flag = 2; // watch_update will run reading mode =)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,8 @@ int serialize_last_book() {
 		FILE* fp_last_book = fopen(last_book_path, "w");
 		if (!fp_last_book) {
 			free(data_path);
-			dlog_print(DLOG_ERROR, TAG, "memory error in serialize_last_book");
+			dlog_print(DLOG_ERROR, TAG,
+					"memory error in serialize_last_book: cant's save file");
 			return NO;
 		}
 		for (int i = 0; i != SZ; ++i) {
@@ -91,7 +92,8 @@ int serialize_last_book() {
 		FILE* fp_pos = fopen(cur_pos_file_path, "w");
 		if (!fp_pos) {
 			free(data_path);
-			dlog_print(DLOG_ERROR, TAG, "memory error in serialize_last_book");
+			dlog_print(DLOG_ERROR, TAG,
+					"memory error in serialize_last_book: can't save id");
 			return NO;
 		}
 		fprintf(fp_pos, "%d", id);

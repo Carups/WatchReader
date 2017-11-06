@@ -1,6 +1,7 @@
 #include "ft.h"
 #include "ft_receiver.h"
 #include "ft_progressbar.h"
+#include "utils.h"
 #include <Ecore.h>
 #include <unistd.h>
 
@@ -86,7 +87,13 @@ static void button_setting(void *data, Evas_Object *obj, void *event_info) {
 static void button_last_book(void *user_data, Evas_Object *obj,
 		void *event_info) {
 
-	flag = 2;
+	// restore last book, start reading mode
+	int rc = deserialize_last_book();
+	if (rc) {
+		flag = 2;
+	} else {
+		dlog_print(DLOG_ERROR, TAG, "# last book not loaded");
+	}
 }
 
 static void button_slower(void *data, Evas_Object *obj, void *event_info) {
@@ -173,13 +180,11 @@ static void update_watch(appdata_s *ad) {
 			elm_object_text_set(ad->label, watch_text);
 			cnt--;
 
-
 		} else {
 			// snprintf(watch_text, TEXT_BUF_SIZE, "<color=#FF4500FF>%s</color>%s<color=#FF4500FF>%c</color>%s", pref_empty, pref, v, suff);
 			cnt--;
 		}
-		if (cnt <= 0)
-		{
+		if (cnt <= 0) {
 			cnt = 0;
 			id++;
 			id %= SZ;
@@ -361,19 +366,19 @@ static void create_base_gui(appdata_s *ad) {
 	elm_object_text_set(ad->faster, "i");
 	evas_object_smart_callback_add(ad->faster, "clicked", button_fast, ad);
 	evas_object_resize(ad->faster, width / 5, height / 4);
-	evas_object_move(ad->faster, 4 * width / 5 + width/10, height / 2 - 40);
+	evas_object_move(ad->faster, 4 * width / 5 + width / 10, height / 2 - 40);
 
 	ad->slower = elm_button_add(ad->conform);
 	elm_object_text_set(ad->slower, "r");
 	evas_object_smart_callback_add(ad->slower, "clicked", button_slower, ad);
 	evas_object_resize(ad->slower, width / 5, height / 4);
-	evas_object_move(ad->slower, width/10, height / 2 - 40);
+	evas_object_move(ad->slower, width / 10, height / 2 - 40);
 
 	ad->back = elm_button_add(ad->conform);
 	elm_object_text_set(ad->back, "back");
 	evas_object_smart_callback_add(ad->back, "clicked", button_back, ad);
 	evas_object_resize(ad->back, width, height / 4);
-	evas_object_move(ad->back, width/10, height / 3 + height / 4);
+	evas_object_move(ad->back, width / 10, height / 3 + height / 4);
 	/* Show window after base gui is set up */
 	evas_object_show(ad->win);
 
@@ -411,7 +416,13 @@ static void app_pause(void *data) {
 	if (timer_p) {
 		ecore_timer_freeze(timer_p);
 	}
+
 	flag = 0;
+
+	int is_saved = serialize_last_book();
+	if (!is_saved) {
+		dlog_print(DLOG_ERROR, TAG, "# last book not saved");
+	}
 }
 
 static void app_resume(void *data) {
@@ -431,6 +442,11 @@ static void app_terminate(void *data) {
 	}
 	if (timer_p) {
 		ecore_timer_del(timer_p);
+	}
+
+	int is_saved = serialize_last_book();
+	if (!is_saved) {
+		dlog_print(DLOG_ERROR, TAG, "# last book not saved");
 	}
 }
 
