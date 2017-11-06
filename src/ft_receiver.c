@@ -4,7 +4,7 @@
 #include "utils.h"
 #include <Ecore.h>
 #include <unistd.h>
-//Николай Кузиванов
+//Николай
 double TIMEOUT_1 = 0.01; // interval for timer1
 
 typedef struct appdata {
