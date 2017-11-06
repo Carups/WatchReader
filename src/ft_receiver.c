@@ -97,7 +97,7 @@ static void button_last_book(void *user_data, Evas_Object *obj,
 }
 
 static void button_slower(void *data, Evas_Object *obj, void *event_info) {
-	USER_SPEED -= 20;
+	USER_SPEED -= 50;
 	if (USER_SPEED <= 100) {
 		USER_SPEED = 100;
 	}
@@ -105,7 +105,7 @@ static void button_slower(void *data, Evas_Object *obj, void *event_info) {
 }
 
 static void button_fast(void *data, Evas_Object *obj, void *event_info) {
-	USER_SPEED += 20;
+	USER_SPEED += 50;
 }
 
 static void button_back(void *data, Evas_Object *obj, void *event_info) {
