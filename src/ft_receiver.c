@@ -4,7 +4,7 @@
 #include "utils.h"
 #include <Ecore.h>
 #include <unistd.h>
-
+//Николай Кузиванов
 double TIMEOUT_1 = 0.01; // interval for timer1
 
 typedef struct appdata {
@@ -34,7 +34,7 @@ int flag = 0, cnt = 0, id = 0;
 const int TEXT_BUF_SIZE = 256, WIDTH = 400, HEGHT = 400;
 Ecore_Timer *timer_p;
 appdata_s* DATA;
-
+//Шаблон проекта
 void pause_timer() {
 	if (timer_p) {
 		ecore_timer_freeze(timer_p);
@@ -80,6 +80,7 @@ static void win_delete_request_cb(void *data, Evas_Object *obj,
 //	ui_app_exit();
 //	return EINA_TRUE;
 //}
+//Николай
 static void button_setting(void *data, Evas_Object *obj, void *event_info) {
 	flag = 1;
 }
@@ -111,7 +112,7 @@ static void button_fast(void *data, Evas_Object *obj, void *event_info) {
 static void button_back(void *data, Evas_Object *obj, void *event_info) {
 	flag = 0;
 }
-
+//Наталия
 static int spritz_function(char* in, char* out, int width, int speed) {
   int shift;
   int red_point = 0.35 * width;
@@ -147,7 +148,7 @@ static int spritz_function(char* in, char* out, int width, int speed) {
   return num_of_tics;
 
 }
-
+//Николай 
 static void update_watch(appdata_s *ad) {
 	if (flag == 2) {
 		evas_object_hide(ad->button);
@@ -213,7 +214,7 @@ static void update_watch(appdata_s *ad) {
 		evas_object_hide(ad->faster);
 	}
 }
-
+//Владимир
 static void _reject_cb(void *data, Evas_Object *obj, void *event_info) {
 	if (!obj)
 		return;
@@ -311,7 +312,7 @@ static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	elm_win_lower(ad->win);
 }
-
+//Николай
 static void create_base_gui(appdata_s *ad) {
 	// Elm_Object_Item *nf_it = NULL;
 
