@@ -104,39 +104,40 @@ static void button_fast(void *data, Evas_Object *obj, void *event_info) {
 static void button_back(void *data, Evas_Object *obj, void *event_info) {
 	flag = 0;
 }
+
 static int spritz_function(char* in, char* out, int width, int speed) {
-	int shift;
-	int red_point = 0.35 * width;
-	int len = (int) strlen(in);
-	int num_of_tics = (60 / TIMEOUT_1) / (speed);
-	// define shift of the word depending on his len
-	if (len == 1 && in[0] != 'M') {
-		shift = red_point - 0;
-	} else if (len > 1 && len <= 5) {
-		shift = red_point - 1;
-	} else if (len > 5 && len <= 9) {
-		shift = red_point - 2;
-	} else if (len > 9 && len <= 13) {
-		shift = red_point - 3;
-	} else {
-		shift = red_point - 4;
-	}
+  int shift;
+  int red_point = 0.35 * width;
+  int len = (int) strlen(in);
+  int num_of_tics = (60 / TIMEOUT_1) / (speed);
+  // define shift of the word depending on his len
+  if (len == 1) {
+    shift = red_point - 0;
+  } else if (len > 1 && len <= 5) {
+    shift = red_point - 1;
+  } else if (len > 5 && len <= 9) {
+    shift = red_point - 2;
+  } else if (len > 9 && len <= 13) {
+    shift = red_point - 3;
+  } else {
+    shift = red_point - 4;
+  }
 
-	for (int i = 0; i < len; i++) {
-		out[shift + i] = in[i];
-	}
-	//define the num of pin
-	if (in[len - 1] == '.' && in[0] != 'M') {
-		num_of_tics *= 5;
-	} else if (len == 1) {
-		num_of_tics *= 2;
-	} else if (len > 1 && len <= 6) {
-		num_of_tics *= 3;
-	} else {
-		num_of_tics *= 2;
-	}
+  for (int i = 0; i < len; i++) {
+    out[shift + i] = in[i];
+  }
+  //define the num of pin
+  if (in[len - 1] == '.' && in[0] != 'M' || in[len - 1] == '!' || in[len - 1]  == '...' || in[len - 1] == '?') {
+    num_of_tics *= 5;
+  } else if (len == 1) {
+    num_of_tics *= 2;
+  } else if (len > 1 && len <= 5) {
+    num_of_tics *= 3;
+  } else {
+    num_of_tics *= 2;
+  }
 
-	return num_of_tics;
+  return num_of_tics;
 
 }
 
